@@ -31,7 +31,7 @@ Program behavior can be configured by defines that can be found in main.c file:
 - `HARD_RESET_ENABLED` - Enable Hard Reset on separate pin on Arduino board;
 - `USE_RGB_LED` - Using RGB LED;
 - `RGB_LED_ANODE` - Using RGB LED with common ANODE, else with common CATHODE;
-- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, uC will poll pad itself (usefull if console is halted);
+- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, uC will poll pad itself (useful if console is halted);
 - `ATMEGA_CLONE_USED` - Using cloned ATmega uC (eg LGT328P), it's adding few NOP's to add some delay before reading buttons state in interrupt handler.
 >Note: It's possible need to add few NOP's manually for uC you using.
 
