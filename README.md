@@ -12,7 +12,7 @@ Is a mod for SEGA Megadrive/Genesis with in-game reset and region switching (lan
   - <kbd>START + B + DOWN</kbd>  - Switch to Asian region (Green)
 - Only language switching mode (if configured, read below):
   - <kbd>START + B + LEFT</kbd>  - Switch to English (Red)
-  - <kbd>START + B + RIGHT</kbd> - Switch to Japan (Green)
+  - <kbd>START + B + RIGHT</kbd> - Switch to Japanese (Green)
 - Only framerate switching mode (if configured, read below):
   - <kbd>START + B + UP</kbd>   - Switch to 60 Hz (Red)
   - <kbd>START + B + DOWN</kbd> - Switch to 50 Hz (Green)
