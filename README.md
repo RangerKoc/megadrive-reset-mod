@@ -28,6 +28,7 @@ Source code can be used by Arduino IDE or can be compiled using avr-toolchain.
 Program behavior can be configured by defines that can be found in main.c file:
 - `ONLY_LANGUAGE_SWITCH` - Use only language switching;
 - `ONLY_FREQUENCY_SWITCH` - Use only framerate switching;
+- `HARD_RESET_ENABLED` - Enable Hard Reset on separate pin on Arduino board;
 - `USE_RGB_LED` - Using RGB LED;
 - `RGB_LED_ANODE` - Using RGB LED with common ANODE, else with common CATHODE;
 - `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, uC will poll pad itself (usefull if console is halted);
