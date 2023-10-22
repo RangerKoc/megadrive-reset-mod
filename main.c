@@ -2,7 +2,7 @@
 // Megadrive Reset Mod
 // ----------------------------------------------------------------------------
 /*
- *   Arduino    Mega Drive Board
+ *   Arduino    Megadrive Board
  *       5V  <- Pad Port Pin 5 (VCC, +5V)
  *       GND <- GND
  * (PD2) D2  <- Pad Port Pin 7 (TH, SEL)
@@ -19,8 +19,8 @@
  * (PC0) A0  -> LED Blue  [optional]
  * (PC1) A1  -> LED Green [optional]
  * (PC2) A2  -> LED Red   [optional]
- * (PC3) A3  -> JP1/2 (Language)
- * (PC4) A4  -> JP3/4 (Video Mode)
+ * (PC3) A3  -> JP1/2 (Language) [and to MultiBIOS Pin 39]
+ * (PC4) A4  -> JP3/4 (Video Mode) [and to MultiBIOS Pin 38]
  * (PC5) A5  -- x
  */
 // ----------------------------------------------------------------------------
@@ -56,13 +56,13 @@
 //#define HARD_RESET_ENABLED
 
 #define USE_BUTTON_DEBOUNCE         /* Use debouncing for button pressing on pad */
-#define DEBOUNCE_THRESHOLD    100   /* Debounce threshold time in milliseconds */
+#define DEBOUNCE_THRESHOLD    200   /* Debounce threshold time in milliseconds */
 
-#define USE_RGB_LED                 /* RGB LED is used */
+#define RGB_LED_ENABLED             /* RGB LED is used */
 #define RGB_LED_ANODE               /* RGB LED has common ANODE, else common CATHODE */
 
 #define POLL_BY_MCU_ENABLED         /* If no pad polling, MCU will poll pad itself */
-#define POLL_TIMEOUT          3000  /* Timeout when MCU will start pad polling */
+#define POLL_TIMEOUT          5000  /* Timeout when MCU will start pad polling */
 #define POLL_PERIOD           100   /* Period between polls by MCU */
 
 #define RESET_LONG_PRESS_TIME 750   /* Reset button long press detection time */
@@ -80,7 +80,7 @@
 #define LED_OFF  cbi(PORTB, DDB5)
 #define LED_ON   sbi(PORTB, DDB5)
 // ----------------------------------------------------------------------------
-#if defined(USE_RGB_LED)
+#if defined(RGB_LED_ENABLED)
 #if defined(RGB_LED_ANODE)
 #  define B_LED_ON  cbi(PORTC, DDC0)
 #  define B_LED_OFF sbi(PORTC, DDC0)
@@ -96,6 +96,13 @@
 #  define R_LED_ON  sbi(PORTC, DDC2)
 #  define R_LED_OFF cbi(PORTC, DDC2)
 #endif
+#else
+#  define B_LED_ON
+#  define B_LED_OFF
+#  define G_LED_ON
+#  define G_LED_OFF
+#  define R_LED_ON
+#  define R_LED_OFF
 #endif
 
 #if !defined(ONLY_FREQUENCY_SWITCH)
@@ -115,9 +122,9 @@
 #define DIR_DATA (PINB & DIR_MASK)
 #define DATA     (DIR_DATA | BTN_DATA)
 /* 0000 0100 */
-#define SEL      ((PIND >> DDD2) & 1)
+#define SEL      (PIND & _BV(DDD2))
 /* 0000 1000 */
-#define RESET    ((PIND >> DDD3) & 1)
+#define RESET    (PIND & _BV(DDD3))
 // ----------------------------------------------------------------------------
 typedef struct
 {
@@ -223,7 +230,7 @@ void set_mode(uint8_t mode)
 #endif
 }
 // ----------------------------------------------------------------------------
-#if defined(USE_RGB_LED)
+#if defined(RGB_LED_ENABLED)
 void update_rgb_led(uint8_t mode)
 {
 #if defined(ONLY_LANGUAGE_SWITCH)
@@ -284,21 +291,23 @@ void update_rgb_led(uint8_t mode)
   }
 #endif
 }
+#else
+#define update_rgb_led(mode)
 #endif
 // ----------------------------------------------------------------------------
 void soft_reset(void)
 {
-  cbi(PORTD, DDD6);
+  sbi(DDRD, DDD6);
   delay_ms(100);
-  sbi(PORTD, DDD6);
+  cbi(DDRD, DDD6);
 }
 // ----------------------------------------------------------------------------
 #if defined(HARD_RESET_ENABLED)
 void hard_reset(void)
 {
-  cbi(PORTD, DDD7);
+  sbi(DDRD, DDD7);
   delay_ms(100);
-  sbi(PORTD, DDD7);
+  cbi(DDRD, DDD7);
 }
 #endif
 // ----------------------------------------------------------------------------
@@ -324,11 +333,13 @@ ISR(INT0_vect)
   static uint8_t hi = 0;
   static uint8_t nd = 0;
 
+  delay_us(2);
+
 #if defined(ATMEGA_CLONE_USED)
-  asm("nop");
-  asm("nop");
-  asm("nop");
-  asm("nop");
+  //asm("nop");
+  //asm("nop");
+  //asm("nop");
+  //asm("nop");
   //asm("nop");
   //asm("nop");
   //asm("nop");
@@ -367,6 +378,18 @@ int main_routine(void)
 int main(void)
 #endif
 {
+  /* no pullup for pin PD6 */
+  cbi(PORTD, DDD6);
+  /* input mode for pin PD6 */
+  cbi(DDRD,  DDD6);
+
+#if defined(HARD_RESET_ENABLED)
+  /* no pullup for pin PD7 */
+  cbi(PORTD, DDD7);
+  /* input mode for pin PD7 */
+  cbi(DDRD,  DDD7);
+#endif
+
   /* pullup pins PB0,PB1,PB2,PB3 */
   PORTB |=  (DIR_MASK);
   /* input mode for pins PB0,PB1,PB2,PB3 */
@@ -377,53 +400,29 @@ int main(void)
   DDRD  &= ~(BTN_MASK);
 
   /* pullup pin PD2 */
-  PORTD |=  (_BV(DDD2));
+  sbi(PORTD, DDD2);
   /* intput mode for pin PD2 */
-  DDRD  &= ~(_BV(DDD2));
+  cbi(DDRD, DDD2);
 
   /* pullup pin PD3 */
-  PORTD |=  (_BV(DDD3));
+  sbi(PORTD, DDD3);
   /* intput mode for pin PD3 */
-  DDRD  &= ~(_BV(DDD3));
+  cbi(DDRD, DDD3);
 
-  /* hi state for pin D6 */
-  PORTD |=  (_BV(DDD6));
-  /* output mode for pins D6 */
-  DDRD  |=  (_BV(DDD6));
-
-#if defined(HARD_RESET_ENABLED)
-  /* hi state for pin D7 */
-  PORTD |=  (_BV(DDD7));
-  /* output mode for pin D7 */
-  DDRD  |=  (_BV(DDD7));
-#endif
-
-#if defined(USE_RGB_LED)
+#if defined(RGB_LED_ENABLED)
   /* output mode for pins PC0,PC1,PC2 */
   DDRC  |=  (_BV(DDC0) | _BV(DDC1) | _BV(DDC2));
 #endif
 
 #if !defined(ONLY_FREQUENCY_SWITCH)
   /* output mode for pin PC3 */
-  DDRC  |=  (_BV(DDC3));
+  sbi(DDRC, DDC3);
 #endif
 
 #if !defined(ONLY_LANGUAGE_SWITCH)
   /* output mode for pin PC4 */
-  DDRC  |=  (_BV(DDC4));
+  sbi(DDRC, DDC4);
 #endif
-
-  /* pullup pins PD2,PD3,PD4,PD5 */
-  //PORTD |=  (BTN_MASK | _BV(DDD2) | _BV(DDD3));
-  /* intput mode for pins PD2,PD3,PD4,PD5 */
-  //DDRD  &= ~(BTN_MASK | _BV(DDD2) | _BV(DDD3));
-
-  /* hi state for pins D6,D7 */
-  //PORTD |=  (_BV(DDD6) | _BV(DDD7));
-  /* output mode for pins D6,D7 */
-  //DDRD  |=  (_BV(DDD6) | _BV(DDD7));
-  /* output mode for pins PC0,PC1,PC2,PC3,PC4 */
-  //DDRC  |=  (_BV(DDC0) | _BV(DDC1) | _BV(DDC2) | _BV(DDC3) | _BV(DDC4));
 
   LED_INIT;
 
@@ -433,9 +432,9 @@ int main(void)
 
   set_mode(mode_on_startup);
 
-#if defined(USE_RGB_LED)
   update_rgb_led(mode_on_startup);
-#endif
+
+  soft_reset();
 
   buttons.hi = buttons.lo = 0;
 #if defined(POLL_BY_MCU_ENABLED)
@@ -487,7 +486,7 @@ int main(void)
 
       buttons.hi = buttons.lo = 0;
 
-      for (uint8_t i = 0; i < 4; i++)
+      //for (uint8_t i = 0; i < 4; i++)
       {
         sbi(PORTD, DDD2);
         delay_us(10);
@@ -497,7 +496,7 @@ int main(void)
       }
 
       /* input mode for pin D2 */
-      cbi(DDRD, DDD2);     
+      cbi(DDRD, DDD2);
       delay_us(10);
 
       poll_int = 0;
@@ -518,11 +517,9 @@ int main(void)
       {
         reset_short_down = 0;
 
-#if defined(USE_RGB_LED)
         B_LED_OFF;
         G_LED_OFF;
         R_LED_OFF;
-#endif
 
         soft_reset();
         buttons.hi = buttons.lo = 0;
@@ -535,9 +532,7 @@ int main(void)
         poll_tmr = POLL_TIMEOUT;
 #endif
 
-#if defined(USE_RGB_LED)
         update_rgb_led(mode_current);
-#endif
       }
     }
     else if (!reset_hold_time)
@@ -551,9 +546,7 @@ int main(void)
 
       set_mode(mode_current);
 
-#if defined(USE_RGB_LED)
       update_rgb_led(mode_current);
-#endif
 
       mode_change_time = t;
 
@@ -661,9 +654,7 @@ int main(void)
           {
             set_mode(mode_new);
 
-#if defined(USE_RGB_LED)
             update_rgb_led(mode_new);
-#endif
 
             mode_current     = mode_new;
             mode_change_time = t;
@@ -682,7 +673,7 @@ int main(void)
         mode_on_startup = mode_current;
         eeprom_write_byte(mode_store_ptr, mode_current);
 
-#if defined(USE_RGB_LED)
+#if defined(RGB_LED_ENABLED)
         /* led blinking */
         for (uint8_t i = 0; i < 2; i++)
         {
