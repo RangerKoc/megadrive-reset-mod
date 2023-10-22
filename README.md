@@ -29,11 +29,11 @@ Program behavior can be configured by defines that can be found in main.c file:
 - `ONLY_LANGUAGE_SWITCH` - Use only language switching;
 - `ONLY_FREQUENCY_SWITCH` - Use only framerate switching;
 - `HARD_RESET_ENABLED` - Enable Hard Reset on separate pin on Arduino board;
-- `USE_RGB_LED` - Using RGB LED;
+- `RGB_LED_ENABLED` - Using RGB LED;
 - `RGB_LED_ANODE` - Using RGB LED with common ANODE, else with common CATHODE;
-- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, uC will poll pad itself (useful if console is halted);
-- `ATMEGA_CLONE_USED` - Using cloned ATmega uC (eg LGT328P), it's adding few NOP's to add some delay before reading buttons state in interrupt handler.
->Note: It's possible need to add few NOP's manually for uC you using.
+- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, MCU will poll pad itself (useful if console is halted);
+- `ATMEGA_CLONE_USED` - Using cloned ATmega MCU (eg LGT328P), it's adding few NOP's to add some delay before reading buttons state in interrupt handler.
+>Note: It's possible need to add few NOP's manually for MCU you using.
 
 ### Installation
 Here is a simplest connection pinout Arduino board to Megadrive board (without illustration):
@@ -55,6 +55,6 @@ Here is a simplest connection pinout Arduino board to Megadrive board (without i
 | (PC0) A0  | -> | LED Blue  `optional` |
 | (PC1) A1  | -> | LED Green `optional` |
 | (PC2) A2  | -> | LED Red   `optional` |
-| (PC3) A3  | -> | JP1/2 (Language) |
-| (PC4) A4  | -> | JP3/4 (Video Mode) |
+| (PC3) A3  | -> | JP1/2 (Language) `and to MultiBIOS Pin 39`|
+| (PC4) A4  | -> | JP3/4 (Video Mode) `and to MultiBIOS Pin 38`|
 | (PC5) A5  | -- | `X` |
