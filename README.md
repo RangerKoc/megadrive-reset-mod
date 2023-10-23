@@ -26,14 +26,14 @@ Based on Arduino compatible boards. Arduino Pro Mini (ATmega328 or ATmega168) is
 Source code can be used by Arduino IDE or can be compiled using avr-toolchain.
 
 ### Configuration
-Program behavior can be configured by defines that can be found in main.c file:
-- `ONLY_LANGUAGE_SWITCH` - Use only language switching;
-- `ONLY_FREQUENCY_SWITCH` - Use only framerate switching;
-- `HARD_RESET_ENABLED` - Enable Hard Reset on separate pin on Arduino board;
-- `RGB_LED_ENABLED` - Using RGB LED;
-- `RGB_LED_ANODE` - Using RGB LED with common ANODE, else with common CATHODE;
-- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, MCU will poll pad itself (useful if console is halted);
-- `ATMEGA_CLONE_USED` - Using cloned ATmega MCU (eg LGT328P), it's adding few NOP's to add some delay before reading buttons state in interrupt handler.
+Program behavior can be configured by defines that can be found in `main.c` file:
+- `ONLY_LANGUAGE_SWITCH` - Use only language switching
+- `ONLY_FREQUENCY_SWITCH` - Use only framerate switching
+- `HARD_RESET_ENABLED` - Enable Hard Reset on separate pin on Arduino board
+- `RGB_LED_ENABLED` - Using RGB LED
+- `RGB_LED_ANODE` - Using RGB LED with common ANODE, else with common CATHODE
+- `POLL_BY_MCU_ENABLED` - If no pad polling by Megadrive, MCU will poll pad itself (useful if console is halted)
+- `ATMEGA_CLONE_USED` - Using cloned ATmega MCU (eg LGT328P), it's adding few NOP's to add some delay before reading buttons state in interrupt handler
 >Note: It's possible need to add few NOP's manually for MCU you using.
 
 ### Installation
