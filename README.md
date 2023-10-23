@@ -1,5 +1,6 @@
 ## Megadrive Reset Mod
-Is a mod for SEGA Megadrive/Genesis with in-game reset and region switching (language and 50/60 Hz framerate) functions based on Arduino compatible boards.
+In-Game Reset mod with region switching feature (language and 50/60 Hz framerate) for SEGA Megadrive/Genesis.
+Based on Arduino compatible boards. Arduino Pro Mini (ATmega328 or ATmega168) is recommended.
 
 ### Features
 - In-game reset using player one controller:
@@ -55,6 +56,8 @@ Here is a simplest connection pinout Arduino board to Megadrive board (without i
 | (PC0) A0  | -> | LED Blue  `optional` |
 | (PC1) A1  | -> | LED Green `optional` |
 | (PC2) A2  | -> | LED Red   `optional` |
-| (PC3) A3  | -> | JP1/2 (Language) `and to MultiBIOS Pin 39`|
-| (PC4) A4  | -> | JP3/4 (Video Mode) `and to MultiBIOS Pin 38`|
+| (PC3) A3  | -> | JP1/2 (Language) `and to MultiBIOS Pin 39` |
+| (PC4) A4  | -> | JP3/4 (Video Mode) `and to MultiBIOS Pin 38` |
 | (PC5) A5  | -- | `X` |
+
+Pictures will be added soon.
